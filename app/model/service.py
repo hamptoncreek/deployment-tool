@@ -1,41 +1,35 @@
-import boto3
-import argparse
+from flask import current_app as app
+from flask_script import Command, Option
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--cluster', required=True)
-parser.add_argument('--key', required=True)
-parser.add_argument('--secret', required=True)
-parser.add_argument('--region', required=True)
-parser.add_argument('--service', required=True)
-parser.add_argument('--status', required=True)
+class StopService(Command):
+    "Recalculate all workflow relationship paths"
 
-args = parser.parse_args()
+    def __init__(self, client):
+        self.client = client
 
-client = boto3.client(
-    'ecs',
-    aws_access_key_id=args.key,
-    aws_secret_access_key=args.secret,
-    region_name=args.region
-)
+    def get_options(self):
+        return [
+            Option('-s', '--service', dest='service', required=True),
+        ] + self.client.options()
 
-def shutdown_service(service_name):
-    client.update_service(
-        cluster=args.cluster,
-        service=service_name,
-        desiredCount=0
-    )
+    def run(self, service, **kwargs):
+        with app.app_context():
+            client = self.client(**kwargs)
+            client.shutdown_service(service)
 
-def startup_service(service_name):
-    client.update_service(
-        cluster=args.cluster,
-        service=service_name,
-        desiredCount=1
-    )
+class StartService(Command):
+    "Recalculate all workflow relationship paths"
 
-if args.status == 'stop':
-    shutdown_service(args.service)
-    print('%s stopped' % args.service)
-else:
-    startup_service(args.service)
-    print('%s started' % args.service)
+    def __init__(self, client):
+        self.client = client
+
+    def get_options(self):
+        return [
+            Option('-s', '--service', dest='service', required=True),
+        ] + self.client.options()
+
+    def run(self, service, **kwargs):
+        with app.app_context():
+            client = self.client(**kwargs)
+            client.startup_service(service)
 

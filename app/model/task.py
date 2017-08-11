@@ -3,7 +3,6 @@ import time
 from flask import current_app as app
 from flask_script import Command, Option
 
-
 class StartAndWait(Command):
     "Recalculate all workflow relationship paths"
 
@@ -14,36 +13,16 @@ class StartAndWait(Command):
         return [
             Option('-d', '--definition', dest='definition', required=True),
             Option('-c', '--command', dest='command', required=True),
-        ] + self.client.get_options()
+        ] + self.client.options()
 
-    def task_status(client, id):
-        response = client.describe_tasks(cluster='default', tasks=[id])
-        return response.get('tasks')[0].get('lastStatus', 'STOPPED')
-
-    def start_task(client, definition, cargs):
-        response = client.run_task(
-            cluster=args.cluster,
-            taskDefinition=definition,
-            overrides=dict(
-                containerOverrides=[
-                    dict(
-                        name='main',
-                        command=cargs
-                    )
-                ]
-            )
-        )
-
-        return response.get('tasks')[0].get('taskArn', None)
-
-    def run(self, definition, command):
+    def run(self, definition, command, **kwargs):
         with app.app_context():
-            print('test')
-            # task_id = self.start_task(definition, command)
-            # print('%s started' % definition)
-            # status = 'PENDING'
-            # while status in ['PENDING', 'RUNNING']:
-            #     status = self.task_status(task_id)
-            #     time.sleep(30)
-            #     print('Waiting for %s to stop, currently %s' % (task_id, status))
+            client = self.client(**kwargs)
+            task_id = client.start_task(definition, command)
+            print('%s started' % definition)
+            status = 'PENDING'
+            while status in ['PENDING', 'RUNNING']:
+                status = client.task_status(task_id)
+                time.sleep(30)
+                print('Waiting for %s to stop, currently %s' % (task_id, status))
 
