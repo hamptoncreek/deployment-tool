@@ -1,10 +1,13 @@
 from flask import Flask
 from flask_script import Manager
+import logging
 
 from app.model import task, deploy, service
 from app.model.client.aws import AwsClient
 
 app = Flask(__name__)
+logger = logging.getLogger('deploy-tool')
+logger.setLevel(logging.INFO)
 
 manager = Manager(app)
 manager.add_command('start-task-and-wait', task.StartAndWait(AwsClient))

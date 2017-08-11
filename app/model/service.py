@@ -9,13 +9,14 @@ class StopService(Command):
 
     def get_options(self):
         return [
+            Option('-c', '--cluster', dest='cluster', required=True),
             Option('-s', '--service', dest='service', required=True),
         ] + self.client.options()
 
-    def run(self, service, **kwargs):
+    def run(self, cluster, service, **kwargs):
         with app.app_context():
             client = self.client(**kwargs)
-            client.shutdown_service(service)
+            client.shutdown_service(cluster, service)
 
 class StartService(Command):
     "Recalculate all workflow relationship paths"
@@ -25,11 +26,12 @@ class StartService(Command):
 
     def get_options(self):
         return [
+            Option('-c', '--cluster', dest='cluster', required=True),
             Option('-s', '--service', dest='service', required=True),
         ] + self.client.options()
 
-    def run(self, service, **kwargs):
+    def run(self, cluster, service, **kwargs):
         with app.app_context():
             client = self.client(**kwargs)
-            client.startup_service(service)
+            client.startup_service(cluster, service)
 

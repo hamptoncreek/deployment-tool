@@ -11,9 +11,9 @@ class AwsClient():
     @classmethod
     def options(cls):
         return [
-            Option('-k', '--aws-key', dest='key', required=True),
-            Option('-s', '--aws-secret', dest='secret', required=True),
-            Option('-r', '--aws-region', dest='region', required=True),
+            Option('-key', '--aws-key', dest='key', required=True),
+            Option('-secret', '--aws-secret', dest='secret', required=True),
+            Option('-region', '--aws-region', dest='region', required=True),
         ]
 
     @property
