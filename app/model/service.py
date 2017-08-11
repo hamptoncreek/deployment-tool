@@ -9,8 +9,8 @@ class StopService(Command):
 
     def get_options(self):
         return [
-            Option('-c', '--cluster', dest='cluster', required=True),
-            Option('-s', '--service', dest='service', required=True),
+            Option('-cluster', '--cluster', dest='cluster', required=True),
+            Option('-service', '--service', dest='service', required=True),
         ] + self.client.options()
 
     def run(self, cluster, service, **kwargs):
@@ -26,8 +26,8 @@ class StartService(Command):
 
     def get_options(self):
         return [
-            Option('-c', '--cluster', dest='cluster', required=True),
-            Option('-s', '--service', dest='service', required=True),
+            Option('-cluster', '--cluster', dest='cluster', required=True),
+            Option('-service', '--service', dest='service', required=True),
         ] + self.client.options()
 
     def run(self, cluster, service, **kwargs):

@@ -9,8 +9,8 @@ class DeployService(Command):
 
     def get_options(self):
         return [
-            Option('-t', '--task', dest='task', required=True),
-            Option('-s', '--service', dest='service', required=True),
+            Option('-task', '--task', dest='task', required=True),
+            Option('-service', '--service', dest='service', required=True),
         ] + self.client.options()
 
     def run(self, task, service, **kwargs):
